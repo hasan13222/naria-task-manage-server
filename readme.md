@@ -11,7 +11,7 @@
   ```
   DB_URL="<MongoDB URL>"
   PORT=5000
-  NODE_ENV=""
+  NODE_ENV="Development"
   SALT=12
   ACCESS_TOKEN_SECRET=""
   REFRESH_TOKEN_SECRET=""
