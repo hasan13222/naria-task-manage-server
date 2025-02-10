@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthRoutes = void 0;
+const express_1 = __importDefault(require("express"));
+const auth_controller_1 = require("./auth.controller");
+const auth_validation_1 = require("./auth.validation");
+const validateRequest_1 = require("../../middleware/validateRequest");
+const verifyToken_1 = require("../../middleware/verifyToken");
+const router = express_1.default.Router();
+router.post('/register', (0, validateRequest_1.validateRequest)(auth_validation_1.AuthValidations.createUserValidationSchema), auth_controller_1.AuthControllers.signup);
+router.post('/login', (0, validateRequest_1.validateRequest)(auth_validation_1.AuthValidations.loginUserValidationSchema), auth_controller_1.AuthControllers.login);
+router.get('/profile', (0, verifyToken_1.verifyCookieToken)(), auth_controller_1.AuthControllers.getMyProfile);
+router.put('/profile', (0, verifyToken_1.verifyCookieToken)(), (0, validateRequest_1.validateRequest)(auth_validation_1.AuthValidations.updateUserValidationSchema), auth_controller_1.AuthControllers.updateMyProfile);
+router.post('/forgot-password', (0, validateRequest_1.validateRequest)(auth_validation_1.AuthValidations.forgetPasswordValidationSchema), auth_controller_1.AuthControllers.forgetPassword);
+router.post('/reset-password', (0, verifyToken_1.verifyToken)(), (0, validateRequest_1.validateRequest)(auth_validation_1.AuthValidations.resetPasswordValidationSchema), auth_controller_1.AuthControllers.resetPassword);
+router.post('/change-password', (0, verifyToken_1.verifyCookieToken)(), (0, validateRequest_1.validateRequest)(auth_validation_1.AuthValidations.changePasswordValidationSchema), auth_controller_1.AuthControllers.changePassword);
+router.post('/refresh-token', auth_controller_1.AuthControllers.refreshToken());
+router.get('/isLoggedIn', (0, verifyToken_1.verifyCookieToken)(), auth_controller_1.AuthControllers.checkLogin());
+router.post('/logout', auth_controller_1.AuthControllers.logout());
+exports.AuthRoutes = router;

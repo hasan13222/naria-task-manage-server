@@ -53,15 +53,15 @@ const login = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.loginAuth(req.body);
   const { token, user, refreshToken } = result;
   res.cookie("token", token, {
-    secure: config.node_env === "Production",
+    secure: true,
     httpOnly: true,
-    sameSite: config.node_env === "Production" ? "none" : "lax",
+    sameSite: "none",
     maxAge: 90 * 24 * 60 * 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
-    secure: config.node_env === "Production",
+    secure: true,
     httpOnly: true,
-    sameSite: config.node_env === "Production" ? "none" : "lax",
+    sameSite: "none",
     maxAge: 90 * 24 * 60 * 60 * 1000,
   });
   sendResponse(res, {
@@ -94,14 +94,14 @@ const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
 
 const logout = () => (req: Request, res: Response) => {
   res.clearCookie("token", {
-    secure: config.node_env === "Production",
+    secure: true,
     httpOnly: true,
-    sameSite: config.node_env === "Production" ? "none" : "lax",
+    sameSite: "none",
   });
   res.clearCookie("refreshToken", {
-    secure: config.node_env === "Production",
+    secure: true,
     httpOnly: true,
-    sameSite: config.node_env === "Production" ? "none" : "lax",
+    sameSite: "none",
   });
   sendResponse(res, {
     status: StatusCodes.OK,
@@ -143,9 +143,9 @@ const refreshToken = () => (req: Request, res: Response) => {
     expiresIn: "1d",
   });
   res.cookie("token", token, {
-    secure: config.node_env === "Production",
+    secure: true,
     httpOnly: true,
-    sameSite: config.node_env === "Production" ? "none" : "lax",
+    sameSite: "none",
     maxAge: 90 * 24 * 60 * 60 * 1000,
   });
   sendResponse(res, {
