@@ -20,7 +20,7 @@ export const verifyToken = () => {
       config.access_token_secret as string
     ) as JwtPayload;
 
-    const { email, role } = decoded as JwtPayload;
+    const { email } = decoded as JwtPayload;
 
     // checking if the user is exist
     const user = await User.findOne({ email: email });
@@ -42,7 +42,7 @@ export const verifyToken = () => {
 export const verifyCookieToken = () => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.token;
-    // console.log(token)
+    
     // check if token is missing
     if (!token) {
       throw new AppError(StatusCodes.UNAUTHORIZED, "You are not authorized");
@@ -53,7 +53,8 @@ export const verifyCookieToken = () => {
       config.access_token_secret as string
     ) as JwtPayload;
 
-    const { email, role } = decoded as JwtPayload;
+
+    const { email } = decoded as JwtPayload;
 
     // checking if the user is exist
     const user = await User.findOne({ email: email });

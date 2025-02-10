@@ -2,25 +2,30 @@ import { model, Schema } from "mongoose";
 import { TTask } from "./task.interface";
 import { TASK_STATUS } from "./task.const";
 
-
-const taskSchema = new Schema<TTask>({
+const taskSchema = new Schema<TTask>(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
     title: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     description: {
-        type: String,
-        required: true,
+      type: String,
     },
     due_date: {
-        type: String,
-        required: true,
+      type: String,
     },
     status: {
-        type: String,
-        required: true,
-        enum: Object.keys(TASK_STATUS)
-    }
-})
+      type: String,
+      enum: Object.keys(TASK_STATUS),
+      default: "todo",
+    },
+  },
+  { timestamps: true }
+);
 
-export const Task = model<TTask>('Task', taskSchema);
+export const Task = model<TTask>("Task", taskSchema);

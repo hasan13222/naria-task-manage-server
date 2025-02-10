@@ -18,11 +18,12 @@ router.post(
 router.get('/profile', verifyCookieToken(), AuthControllers.getMyProfile)
 router.put('/profile', verifyCookieToken(), validateRequest(AuthValidations.updateUserValidationSchema), AuthControllers.updateMyProfile)
 
-router.post('/change-password', verifyCookieToken(), validateRequest(AuthValidations.changePasswordValidationSchema), AuthControllers.changePassword)
 router.post('/forgot-password', validateRequest(AuthValidations.forgetPasswordValidationSchema), AuthControllers.forgetPassword)
 router.post('/reset-password', verifyToken(), validateRequest(AuthValidations.resetPasswordValidationSchema), AuthControllers.resetPassword)
 
+router.post('/change-password', verifyCookieToken(), validateRequest(AuthValidations.changePasswordValidationSchema), AuthControllers.changePassword)
 router.post('/refresh-token', AuthControllers.refreshToken())
-router.get('/logout', AuthControllers.logout())
+router.get('/isLoggedIn', verifyCookieToken(), AuthControllers.checkLogin())
+router.post('/logout', AuthControllers.logout())
 
 export const AuthRoutes = router;

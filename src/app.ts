@@ -8,7 +8,7 @@ import router from "./app/routes";
 const app: Application = express();
 
 // cors middleware
-app.use(cors());
+app.use(cors({origin: ['http://localhost:5173'], credentials: true}));
 
 // json parsing middleware
 app.use(express.json());

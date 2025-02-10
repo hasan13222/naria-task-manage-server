@@ -31,7 +31,7 @@ const forgetPassword = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.sendLinkToEmail(req.body);
   sendResponse(res, {
     status: StatusCodes.OK,
-    message: "Password changed successfully",
+    message: "Lint set to your email to change password",
     data: result,
   });
 });
@@ -58,6 +58,12 @@ const login = catchAsync(async (req: Request, res: Response) => {
     sameSite: config.node_env === "Production" ? "none" : "lax",
     maxAge: 90 * 24 * 60 * 60 * 1000,
   });
+  res.cookie("refreshToken", refreshToken, {
+    secure: config.node_env === "Production",
+    httpOnly: true,
+    sameSite: config.node_env === "Production" ? "none" : "lax",
+    maxAge: 90 * 24 * 60 * 60 * 1000,
+  });
   sendResponse(res, {
     status: StatusCodes.OK,
     message: "User Logged In successfully",
@@ -74,9 +80,11 @@ const getMyProfile = (req: Request, res: Response) => {
   });
 };
 
-
 const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
-  const result = await AuthServices.updateMyProfileIntoDb(req.user.userId, req.body);
+  const result = await AuthServices.updateMyProfileIntoDb(
+    req.user.user._id,
+    req.body
+  );
   sendResponse(res, {
     status: StatusCodes.OK,
     message: "Profile Updated successfully",
@@ -84,15 +92,17 @@ const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
-
 const logout = () => (req: Request, res: Response) => {
   res.clearCookie("token", {
     secure: config.node_env === "Production",
     httpOnly: true,
     sameSite: config.node_env === "Production" ? "none" : "lax",
   });
-  console.log("hit here");
+  res.clearCookie("refreshToken", {
+    secure: config.node_env === "Production",
+    httpOnly: true,
+    sameSite: config.node_env === "Production" ? "none" : "lax",
+  });
   sendResponse(res, {
     status: StatusCodes.OK,
     message: "User Logged out successfully",
@@ -100,8 +110,16 @@ const logout = () => (req: Request, res: Response) => {
   });
 };
 
+const checkLogin = () => (req: Request, res: Response) => {
+  sendResponse(res, {
+    status: StatusCodes.OK,
+    message: "User is Logged In",
+    data: req.user,
+  });
+};
+
 const refreshToken = () => (req: Request, res: Response) => {
-  const refreshToken = req.headers.cookie?.split("=")[1];
+  const refreshToken = req.cookies.refreshToken;
 
   const decoded = jwt.verify(
     refreshToken as string,
@@ -124,6 +142,12 @@ const refreshToken = () => (req: Request, res: Response) => {
   const token = jwt.sign(jwtPayload, config.access_token_secret as string, {
     expiresIn: "1d",
   });
+  res.cookie("token", token, {
+    secure: config.node_env === "Production",
+    httpOnly: true,
+    sameSite: config.node_env === "Production" ? "none" : "lax",
+    maxAge: 90 * 24 * 60 * 60 * 1000,
+  });
   sendResponse(res, {
     status: StatusCodes.OK,
     message: "Acceess token has been sent successfully",
@@ -140,5 +164,6 @@ export const AuthControllers = {
   resetPassword,
   refreshToken,
   getMyProfile,
-  updateMyProfile
+  updateMyProfile,
+  checkLogin,
 };

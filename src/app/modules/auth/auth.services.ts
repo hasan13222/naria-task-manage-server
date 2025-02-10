@@ -54,7 +54,7 @@ const sendLinkToEmail = async (payload: TChangePassword) => {
     }
   );
 
-  const resetLink = `http://localhost:3000/reset-password?id=${user._id}&token=${accessToken}`;
+  const resetLink = `${config.client_url}/reset-password?id=${user._id}&token=${accessToken}`;
   sendEmail(user.email, resetLink);
 };
 
@@ -118,12 +118,12 @@ const loginAuth = async (payload: TUserLoginDetails) => {
   };
 
   const token = jwt.sign(jwtPayload, config.access_token_secret as string, {
-    expiresIn: "1d",
+    expiresIn: "30d",
   });
   const refreshToken = jwt.sign(
     jwtPayload,
     config.refresh_token_secret as string,
-    { expiresIn: "30d" }
+    { expiresIn: "90d" }
   );
 
   return { token, refreshToken, user };
